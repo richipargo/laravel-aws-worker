@@ -74,7 +74,7 @@ class WorkerController extends LaravelController
     protected function parseCommand($command)
     {
         $elements = explode(' ', $command);
-        $name = $elements[0];
+        $name = [$elements[0]];
         if (count($elements) == 1) return [$name, []];
 
         array_shift($elements);
@@ -87,11 +87,17 @@ class WorkerController extends LaravelController
                 return;
             }
 
+            if (!strstr($parameter, '-')) {
+              array_push($name, $parameter);
+
+              return;
+            }
+
             $arguments[$parameter] = true;
         }, $elements);
 
         return [
-            $name,
+            implode(' ', $name),
             $arguments
         ];
     }
