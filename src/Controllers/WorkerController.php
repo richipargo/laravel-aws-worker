@@ -74,30 +74,32 @@ class WorkerController extends LaravelController
     protected function parseCommand($command)
     {
         $elements = explode(' ', $command);
-        $name = [$elements[0]];
+        $name = $elements[0];
         if (count($elements) == 1) return [$name, []];
 
         array_shift($elements);
         $arguments = [];
 
-        array_map(function($parameter) use (&$arguments, &$name) {
+        if (count($elements) > 2) {
+          $last = array_slice($elements, -2);
+
+          if ($last[0] == '--') {
+            $arguments[$last[0]] = $last[1];
+          }
+        }
+
+        array_map(function($parameter) use (&$arguments) {
             if (strstr($parameter, '=')) {
                 $parts = explode('=', $parameter);
                 $arguments[$parts[0]] = $parts[1];
                 return;
             }
 
-            if (!strstr($parameter, '-')) {
-              array_push($name, $parameter);
-
-              return;
-            }
-
             $arguments[$parameter] = true;
         }, $elements);
 
         return [
-            implode(' ', $name),
+            $name,
             $arguments
         ];
     }
