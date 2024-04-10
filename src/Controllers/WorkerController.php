@@ -80,7 +80,7 @@ class WorkerController extends LaravelController
         array_shift($elements);
         $arguments = [];
 
-        array_map(function($parameter) use (&$arguments) {
+        array_map(function($parameter) use (&$arguments, &$name) {
             if (strstr($parameter, '=')) {
                 $parts = explode('=', $parameter);
                 $arguments[$parts[0]] = $parts[1];
